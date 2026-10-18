@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Bot, ShieldCheck, SlidersHorizontal, Server, Zap, Clock3, Check } from "lucide-react";
 import Topbar from "@/components/Topbar";
+import Brand from "@/components/Brand";
 
 const plans = [
   { id:"A", name:"Premium Basic", duration:"7 hari", ram:"3 GB contoh", price:"Segera hadir", desc:"Untuk mulai mencoba", features:["Dashboard bot","Status dan log dasar","Pengaturan bot dasar","Plugin sesuai paket"], featured:false },
