@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "JADIBOT — Hosting bot dalam satu panel",
-  description: "Kelola bot WhatsApp melalui dashboard yang praktis dan aman.",
+  title: "FRANXX JADIBOT — Bot Management",
+  description: "FRANXX JADIBOT oleh KYZX — kelola bot melalui dashboard yang sederhana dan aman.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

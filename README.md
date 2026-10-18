@@ -1,6 +1,6 @@
-# JADIBOT Web — Vercel + Supabase
+# FRANXX JADIBOT — Vercel + Supabase
 
-Fondasi web panel JADIBOT. Ini adalah **tahap web/UI dan autentikasi**; belum menjalankan bot WhatsApp sungguhan, belum memproses pembayaran, dan belum melakukan provisioning container.
+Fondasi web panel FRANXX JADIBOT, developed by KYZX. Ini adalah **tahap web/UI dan autentikasi**; belum menjalankan bot WhatsApp sungguhan, belum memproses pembayaran, dan belum melakukan provisioning container.
 
 ## Stack
 - Next.js App Router + TypeScript + Tailwind CSS
@@ -40,3 +40,10 @@ Jika environment Supabase belum diisi, halaman publik tetap bisa dilihat, tetapi
 - Jangan memberikan shell atau akses source code ke pengguna. Setiap instance wajib memiliki session WhatsApp, database, dan resource limits yang terpisah.
 - RAM paket di UI masih contoh, bukan kapasitas host yang sudah tersedia.
 - Supabase service-role key tidak boleh memiliki prefix `NEXT_PUBLIC_` dan tidak boleh masuk ke browser.
+
+
+## Tema dan branding
+- Nama brand: FRANXX JADIBOT
+- Developer credit: KYZX
+- Theme switch: tema hitam/putih, pilihan disimpan di browser (`localStorage`).
+- Font: DM Sans + Manrope.
