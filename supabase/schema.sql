@@ -108,3 +108,8 @@ insert into public.plans (id, name, duration_days, ram_mb, price_idr, features, 
   ('C','Enterprise',30,8192,21000,'["Fitur paket sebelumnya","Batas resource sesuai paket","Prioritas pengelolaan"]'::jsonb,true),
   ('D','Owner Unlimited',30,12288,30000,'["Semua fitur yang tersedia","Kelola plugin bot","Watermark kustom","Kontrol bot tingkat lanjut"]'::jsonb,true)
 on conflict (id) do update set name=excluded.name, duration_days=excluded.duration_days, price_idr=excluded.price_idr, features=excluded.features, is_active=excluded.is_active;
+
+-- Kolom tambahan untuk panel review admin. Aman dijalankan pada schema yang sudah ada.
+alter table public.payment_requests add column if not exists rejection_reason text;
+create index if not exists payment_requests_status_created_idx on public.payment_requests(status, created_at desc);
+create index if not exists subscriptions_user_status_idx on public.subscriptions(user_id, status);

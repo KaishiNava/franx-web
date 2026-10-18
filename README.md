@@ -55,3 +55,12 @@ Harga yang ditampilkan: A Rp7.500/7 hari, B Rp14.000/14 hari, C Rp21.000/30 hari
 **Penting:** nomor/akun GoPay dan DANA serta QRIS resmi belum disertakan karena harus memakai tujuan pembayaran milik pengelola. Isi detail pembayaran dan alur unggah bukti setelah data tujuan pembayaran tersedia. Permintaan pesanan tidak otomatis mengaktifkan langganan; verifikasi dan aktivasi harus dilakukan admin/server-side.
 
 Profil pengaturan mengambil nama/avatar dari metadata OAuth Google/GitHub (`full_name`, `name`, `user_name`, `avatar_url`, `picture`) dan menampilkan email serta provider dari Supabase Auth. Pastikan provider Google/GitHub dan redirect URL sudah diaktifkan pada Supabase Authentication.
+
+## Pembaruan menu dan pembayaran manual
+- Navigasi layar kecil memakai tombol hamburger; Profil/Pengaturan dan Logout ada di menu tersebut.
+- GoPay dan DANA menampilkan nomor tujuan `083847418942`.
+- QRIS dibaca dari `public/qris.jpg`. File QRIS tidak disertakan dalam arsip ini; masukkan gambar QRIS resmi milik pengelola ke lokasi tersebut sebelum deploy.
+- Panel review admin tersedia di `/dashboard/admin`. Isi `ADMIN_EMAILS` dengan email admin dan `SUPABASE_SERVICE_ROLE_KEY` di environment server Vercel. Jalankan ulang `supabase/schema.sql` untuk kolom review tambahan. Admin dapat menyetujui atau menolak pesanan dengan alasan.
+- Persetujuan pembayaran membuat langganan aktif di database. **Ini belum otomatis membuat container atau menjalankan bot.** Provisioning Pterodactyl memerlukan adapter backend yang menggunakan Application API key secara server-side, konfigurasi egg/nest, alokasi, image, startup command, serta template bot yang sudah disediakan. Jangan menyimpan API key di browser.
+- Upload bukti transfer dan notifikasi real-time belum diimplementasikan; admin saat ini meninjau referensi pesanan. Tambahkan bucket Supabase Storage privat dan alur unggah bukti sebelum menerima transaksi produksi.
+- Jangan menerima pembayaran sungguhan sampai file QRIS valid, email admin benar, service-role key disimpan aman, dan alur verifikasi sudah diuji.
