@@ -113,3 +113,10 @@ on conflict (id) do update set name=excluded.name, duration_days=excluded.durati
 alter table public.payment_requests add column if not exists rejection_reason text;
 create index if not exists payment_requests_status_created_idx on public.payment_requests(status, created_at desc);
 create index if not exists subscriptions_user_status_idx on public.subscriptions(user_id, status);
+
+
+-- Bukti pembayaran disimpan di bucket PRIVATE; hanya API server memakai service-role key
+-- yang dapat mengunggah/membuat signed URL. Jangan jadikan bucket public.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('payment-proofs', 'payment-proofs', false, 5242880, array['image/jpeg','image/png','image/webp'])
+on conflict (id) do update set public = false, file_size_limit = 5242880, allowed_mime_types = array['image/jpeg','image/png','image/webp'];

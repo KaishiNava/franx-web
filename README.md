@@ -64,3 +64,15 @@ Profil pengaturan mengambil nama/avatar dari metadata OAuth Google/GitHub (`full
 - Persetujuan pembayaran membuat langganan aktif di database. **Ini belum otomatis membuat container atau menjalankan bot.** Provisioning Pterodactyl memerlukan adapter backend yang menggunakan Application API key secara server-side, konfigurasi egg/nest, alokasi, image, startup command, serta template bot yang sudah disediakan. Jangan menyimpan API key di browser.
 - Upload bukti transfer dan notifikasi real-time belum diimplementasikan; admin saat ini meninjau referensi pesanan. Tambahkan bucket Supabase Storage privat dan alur unggah bukti sebelum menerima transaksi produksi.
 - Jangan menerima pembayaran sungguhan sampai file QRIS valid, email admin benar, service-role key disimpan aman, dan alur verifikasi sudah diuji.
+
+
+## Bukti pembayaran & troubleshooting admin
+1. Jalankan seluruh `supabase/schema.sql` melalui Supabase Dashboard → SQL Editor. Skrip mencakup tabel `payment_requests`, kolom review, paket, dan bucket private `payment-proofs`.
+2. Vercel Environment Variables wajib berisi `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (server only), dan `ADMIN_EMAILS` (email yang dikembalikan Supabase Auth untuk akun GitHub admin). Jangan gunakan prefix `NEXT_PUBLIC_` untuk service role key.
+3. Redeploy setelah env/schema siap.
+4. User membuat pesanan, transfer, lalu mengunggah bukti JPG/PNG/WEBP maksimal 5 MB. Pesanan berubah ke `awaiting_review`.
+5. Admin endpoint hanya menerima akun yang emailnya tercantum di `ADMIN_EMAILS`. Bukti disimpan pada bucket private dan link bertanda tangan berlaku 5 menit.
+
+Jika halaman admin menampilkan “Gagal mengambil pesanan”, cek response Network untuk `/api/admin/payment-requests`: status 403 berarti sesi/email admin tidak cocok; status 500 biasanya environment service role/URL salah, tabel `payment_requests` belum dibuat, atau bucket/storage belum dikonfigurasi.
+
+Jika database sudah berjalan dan ingin hanya menambahkan fitur bukti pembayaran, jalankan `supabase/payment-proof-migration.sql` (bukan seluruh schema dari awal). Pastikan tabel `public.subscriptions` dan `public.plans` sudah ada karena fitur approve memerlukannya.

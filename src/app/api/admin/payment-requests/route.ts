@@ -10,7 +10,12 @@ export async function GET() {
     const admin = createAdminClient();
     const { data, error } = await admin.from("payment_requests").select("id,user_id,plan_id,amount_idr,payment_method,status,reference,proof_url,rejection_reason,created_at").order("created_at", { ascending: false }).limit(100);
     if (error) throw error;
-    return NextResponse.json({ requests: data || [] });
+    const requests = await Promise.all((data || []).map(async (item) => {
+      if (!item.proof_url) return item;
+      const { data: signed } = await admin.storage.from("payment-proofs").createSignedUrl(item.proof_url, 300);
+      return { ...item, proof_signed_url: signed?.signedUrl || null };
+    }));
+    return NextResponse.json({ requests });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Gagal mengambil pesanan." }, { status: 500 });
   }

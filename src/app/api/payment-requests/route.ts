@@ -18,10 +18,10 @@ export async function POST(request: Request) {
   const plan = plans[planId];
   if (!plan || !methods.has(method)) return NextResponse.json({ error: "Paket atau metode pembayaran tidak valid." }, { status: 400 });
   const reference = `FX-${randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase()}`;
-  const { error } = await supabase.from("payment_requests").insert({ user_id: user.id, plan_id: planId, amount_idr: plan.price, payment_method: method, status: "pending", reference });
+  const { data: payment, error } = await supabase.from("payment_requests").insert({ user_id: user.id, plan_id: planId, amount_idr: plan.price, payment_method: method, status: "pending", reference }).select("id").single();
   if (error) {
     console.error("payment request insert failed", error.message);
     return NextResponse.json({ error: "Belum bisa membuat pesanan. Pastikan SQL pembaruan payment_requests sudah dijalankan di Supabase." }, { status: 500 });
   }
-  return NextResponse.json({ reference, status: "pending", amount: plan.price }, { status: 201 });
+  return NextResponse.json({ id: payment.id, reference, status: "pending", amount: plan.price }, { status: 201 });
 }
