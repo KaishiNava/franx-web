@@ -47,3 +47,11 @@ Jika environment Supabase belum diisi, halaman publik tetap bisa dilihat, tetapi
 - Developer credit: KYZX
 - Theme switch: tema hitam/putih, pilihan disimpan di browser (`localStorage`).
 - Font: DM Sans + Manrope.
+
+## Harga paket dan pembayaran manual
+
+Harga yang ditampilkan: A Rp7.500/7 hari, B Rp14.000/14 hari, C Rp21.000/30 hari, D Rp30.000/30 hari. Checkout menerima pilihan GoPay, DANA, dan QRIS manual serta membuat `payment_requests` berstatus `pending` di Supabase. Jalankan blok SQL `payment_requests` dan seed harga dari `supabase/schema.sql` pada SQL Editor Supabase sebelum menguji checkout.
+
+**Penting:** nomor/akun GoPay dan DANA serta QRIS resmi belum disertakan karena harus memakai tujuan pembayaran milik pengelola. Isi detail pembayaran dan alur unggah bukti setelah data tujuan pembayaran tersedia. Permintaan pesanan tidak otomatis mengaktifkan langganan; verifikasi dan aktivasi harus dilakukan admin/server-side.
+
+Profil pengaturan mengambil nama/avatar dari metadata OAuth Google/GitHub (`full_name`, `name`, `user_name`, `avatar_url`, `picture`) dan menampilkan email serta provider dari Supabase Auth. Pastikan provider Google/GitHub dan redirect URL sudah diaktifkan pada Supabase Authentication.

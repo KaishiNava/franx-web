@@ -77,3 +77,34 @@ create policy "instances_update_own_config_only" on public.bot_instances for upd
 -- For bot_instances, production should replace the broad UPDATE policy with a safe
 -- server endpoint that allowlists editable config keys and enforces package features.
 -- Never expose SUPABASE_SERVICE_ROLE_KEY in browser/client variables.
+
+-- Permintaan pembayaran manual (GoPay, DANA, QRIS). Jalankan blok ini
+-- jika project Supabase sudah memakai schema lama.
+create table if not exists public.payment_requests (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  plan_id text not null check (plan_id in ('A','B','C','D')),
+  amount_idr integer not null check (amount_idr > 0),
+  payment_method text not null check (payment_method in ('gopay','dana','qris')),
+  status text not null default 'pending' check (status in ('pending','awaiting_review','paid','rejected','cancelled')),
+  reference text not null unique,
+  proof_url text,
+  verified_by uuid references auth.users(id) on delete set null,
+  verified_at timestamptz,
+  created_at timestamptz not null default now()
+);
+alter table public.payment_requests enable row level security;
+drop policy if exists "payment_requests_read_own" on public.payment_requests;
+create policy "payment_requests_read_own" on public.payment_requests for select to authenticated using (auth.uid() = user_id);
+drop policy if exists "payment_requests_insert_own" on public.payment_requests;
+create policy "payment_requests_insert_own" on public.payment_requests for insert to authenticated with check (auth.uid() = user_id and status = 'pending' and verified_by is null and verified_at is null);
+drop policy if exists "payment_requests_no_client_update" on public.payment_requests;
+-- Tidak membuat policy UPDATE untuk user. Verifikasi harus dilakukan server/admin.
+
+-- Harga resmi FRANXX JADIBOT (resource/RAM tetap harus ditetapkan terpisah).
+insert into public.plans (id, name, duration_days, ram_mb, price_idr, features, is_active) values
+  ('A','Premium Basic',7,3072,7500,'["Pengaturan bot dasar","Status dan log dasar","Pengelolaan satu instance"]'::jsonb,true),
+  ('B','Premium Full',14,6144,14000,'["Semua fitur Basic","Kontrol konfigurasi lanjutan","Pemantauan instance"]'::jsonb,true),
+  ('C','Enterprise',30,8192,21000,'["Fitur paket sebelumnya","Batas resource sesuai paket","Prioritas pengelolaan"]'::jsonb,true),
+  ('D','Owner Unlimited',30,12288,30000,'["Semua fitur yang tersedia","Kelola plugin bot","Watermark kustom","Kontrol bot tingkat lanjut"]'::jsonb,true)
+on conflict (id) do update set name=excluded.name, duration_days=excluded.duration_days, price_idr=excluded.price_idr, features=excluded.features, is_active=excluded.is_active;
